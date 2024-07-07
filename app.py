@@ -1,4 +1,4 @@
-import polars as pl
+import pandas as pd
 import os
 import random
 import requests
@@ -68,7 +68,7 @@ class Bot:
         elif input_command in self.fun_fact_commands:
             return self.tell_fun_fact()
         elif input_command in self.responses["input"].to_list():
-            response = self.responses.filter(pl.col("input") == input_command)["output"][0]
+            response = self.responses[self.responses["input"] == input_command]["output"].iloc[0]
             return response
         elif input_command in self.time_commands:
             now = datetime.now()
@@ -146,8 +146,8 @@ class Bot:
         except Exception as e:
             return f"Sorry, I couldn't calculate that. Error: {str(e)}"
 
-# Read the TSV file without headers
-df = pl.read_csv(dialog_file, separator="\t", has_header=False, new_columns=["input", "output"])
+# Read the CSV file without headers using pandas
+df = pd.read_csv(dialog_file, sep="\t", header=None, names=["input", "output"])
 
 # Initialize Flask application
 app = Flask(__name__, static_url_path='/static', static_folder='static')
@@ -156,7 +156,6 @@ app = Flask(__name__, static_url_path='/static', static_folder='static')
 bot = Bot(df, api_key)
 
 # Define route for home page
-
 @app.route("/", methods=["GET", "POST"])
 def chat():
     if request.method == "POST":
@@ -164,7 +163,6 @@ def chat():
         bot_response = bot.get_response(user_input)
         return jsonify({"bot_response": bot_response})
     return render_template("index.html")
-
 
 if __name__ == "__main__":
     app.run(debug=True)
