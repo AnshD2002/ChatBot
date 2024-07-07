@@ -21,7 +21,9 @@ To run the chatbot locally, follow these steps:
    ```bash
    git clone https://github.com/AnshD2002/ChatBot.git
    cd ChatBot
-   ```Install dependencies:
+2. Install dependencies:
+   ```bash
    pip install -r requirements.txt
-   ```Run the application:
+4. Run the application:
+   ```bash
    python app.py
